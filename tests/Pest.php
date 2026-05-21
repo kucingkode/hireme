@@ -1,8 +1,11 @@
 <?php
 
+require_once __DIR__ . '/../app/helpers.php';
+
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+
 
 /*
 |--------------------------------------------------------------------------

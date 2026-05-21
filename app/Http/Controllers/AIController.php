@@ -170,7 +170,7 @@ EOD,
                     foreach ($function_calls as $function_call) {
                         $updates = json_decode($function_call["arguments"]);
                         $updates = (object) array_filter((array) $updates);
-                        $cv_data = (object) array_merge((array) $cv_data, (array) $updates);
+                        $cv_data = merge_cv($cv_data, $updates);
 
                         $cv = Cv::updateOrCreate(
                             ["id" => $cv_id ?: Uuid::uuid7()->toString(), "user_id" => $user_id],
