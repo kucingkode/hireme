@@ -15,15 +15,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AIController extends Controller
 {
-    private $openai_client;
-
-    public function __construct()
-    {
-        $this->openai_client = OpenAI::client(config("openai.api_key"));
-    }
-
     public function text(Request $request)
     {
+
+        $client = OpenAI::client(config("openai.api_key"));
+
         $validated = $request->validate([
             "cv_id" => "nullable|string",
             "messages" => "required|array",
@@ -65,7 +61,7 @@ class AIController extends Controller
 
         $cv_json = json_encode($cv_data, JSON_PRETTY_PRINT);
 
-        $stream = $this->openai_client->chat()->createStreamed([
+        $stream = $client->chat()->createStreamed([
             "model" => "gpt-5.4-mini",
             "tools" => config("openai.tools"),
             'temperature' => 0.6,
@@ -211,6 +207,8 @@ EOD,
 
     public function transcribe(Request $request)
     {
+        $client = OpenAI::client(config("openai.api_key"));
+
         $request->validate([
             "audio" => "required|file|max:5120",
         ]);
@@ -219,7 +217,7 @@ EOD,
         $tempPath = sys_get_temp_dir() . "/" . uniqid() . ".webm";
         copy($file->getPathname(), $tempPath);
 
-        $response = $this->openai_client->audio()->transcribe([
+        $response = $client->audio()->transcribe([
             "model" => "whisper-1",
             "file" => fopen($tempPath, "r")
         ]);
@@ -231,6 +229,8 @@ EOD,
 
     public function analyze(Request $request)
     {
+        $client = OpenAI::client(config("openai.api_key"));
+
         $request->validate([
             "file" => "required|file|mimes:pdf|max:25600",
         ]);
@@ -238,7 +238,7 @@ EOD,
         $file = $request->file("file");
         $text = (new Parser())->parseFile($file->getPathname())->getText();
 
-        $stream = $this->openai_client->chat()->createStreamed([
+        $stream = $client->chat()->createStreamed([
             "model" => "gpt-5.4-nano",
             'temperature' => 0.3,
             "messages" => [
