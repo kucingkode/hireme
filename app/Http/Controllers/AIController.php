@@ -66,7 +66,7 @@ class AIController extends Controller
         $cv_json = json_encode($cv_data, JSON_PRETTY_PRINT);
 
         $stream = $this->openai_client->chat()->createStreamed([
-            "model" => "gpt-5.4-nano",
+            "model" => "gpt-5.4-mini",
             "tools" => config("openai.tools"),
             'temperature' => 0.6,
             "messages" => array_merge(
@@ -86,6 +86,7 @@ Your goal is to help the user build the best possible CV through natural convers
 - Always confirm before overwriting existing data that looks complete
 - Respond in the same language the user is writing in
 - Start from personal information
+- If the user want to see your max potential or want to see complex example, use a complex dummy data.
 
 ## CV Building Rules
 - Call `patch_cv` incrementally after each section is discussed and confirmed, do not wait until the end
